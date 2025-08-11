@@ -145,6 +145,117 @@
       audio.currentTime = 6;
     });
   </script>
+
+   <style>
+      #controls {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 999;
+      }
+      button {
+        background: rgba(0,0,0,0.6);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" 
+             embedded 
+             color-space="sRGB"
+             renderer="colorManagement: true, physicallyCorrectLights" 
+             vr-mode-ui="enabled: false"
+             device-orientation-permission-ui="enabled: false">
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <!-- Ejemplo: modelo -->
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-gltf-model src="#modelo" scale="0.1 0.1 0.1" position="0 0 0"></a-gltf-model>
+      </a-entity>
+    </a-scene>
+
+    <!-- Controles -->
+    <div id="controls">
+      <button id="zoomIn">Zoom +</button>
+      <button id="zoomOut">Zoom −</button>
+      <button id="foto">📷 Foto</button>
+      <button id="videoStart">⏺ Grabar</button>
+      <button id="videoStop" style="display:none;">⏹ Detener</button>
+    </div>
+
+    <script>
+      let videoTrack;
+      let currentZoom = 1;
+      let mediaRecorder;
+      let chunks = [];
+
+      // Esperar a que MindAR inicialice la cámara
+      document.querySelector("a-scene").addEventListener("renderstart", () => {
+        const mindarComponent = document.querySelector("a-scene").systems["mindar-image"];
+        const stream = mindarComponent.video.srcObject;
+        videoTrack = stream.getVideoTracks()[0];
+      });
+
+      // Zoom +
+      document.getElementById("zoomIn").onclick = () => {
+        if (!videoTrack) return;
+        currentZoom += 0.5;
+        videoTrack.applyConstraints({ advanced: [{ zoom: currentZoom }] }).catch(console.error);
+      };
+
+      // Zoom −
+      document.getElementById("zoomOut").onclick = () => {
+        if (!videoTrack) return;
+        currentZoom = Math.max(1, currentZoom - 0.5);
+        videoTrack.applyConstraints({ advanced: [{ zoom: currentZoom }] }).catch(console.error);
+      };
+
+      // Foto
+      document.getElementById("foto").onclick = () => {
+        const canvas = document.querySelector("a-scene").components.screenshot.getCanvas("perspective");
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "captura.png";
+        link.click();
+      };
+
+      // Grabar video
+      document.getElementById("videoStart").onclick = () => {
+        const canvasStream = document.querySelector("a-scene").components.screenshot.getCanvas("perspective").captureStream(30);
+        mediaRecorder = new MediaRecorder(canvasStream);
+        chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: "video/mp4" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "grabacion.mp4";
+          a.click();
+        };
+
+        mediaRecorder.start();
+        document.getElementById("videoStart").style.display = "none";
+        document.getElementById("videoStop").style.display = "inline";
+      };
+
+      // Detener grabación
+      document.getElementById("videoStop").onclick = () => {
+        mediaRecorder.stop();
+        document.getElementById("videoStart").style.display = "inline";
+        document.getElementById("videoStop").style.display = "none";
+      };
+    </script>
 </body>
+
 
 </html>
