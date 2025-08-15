@@ -47,6 +47,8 @@
       <a-asset-item id="Animacion4" src="src/model/cute/Frog-Pride-2.glb"></a-asset-item>
       <a-asset-item id="Animacion5" src="src/model/cute/Cute_Cat.glb"></a-asset-item>
       <a-asset-item id="Animacion6" src="src/model/trill/Head.glb"></a-asset-item>
+      <a-asset-item id="Animacion7" src="src/model/trill/Wings.glb"></a-asset-item>
+      <a-asset-item id="Animacion8" src="src/model/collab/LogoUTL.glb"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -63,7 +65,7 @@
 
     <!-- targetIndex 2 para Snake -->
     <a-entity id="anchor2" mindar-image-target="targetIndex: 2">
-      <a-gltf-model id="modelo-temp" src="#Animacion2" rotation="180 90 180" position="2 0 0" scale="0.09 0.09 0.09"
+      <a-gltf-model id="modelo-temp" src="#Animacion2" rotation="180 90 180" position="1.1 0 0" scale="0.05 0.05 0.05"
         animation-mixer> </a-gltf-model>
     </a-entity>
     <!-- ajolote -->
@@ -86,6 +88,18 @@
       <a-gltf-model id="modelo-temp" src="#Animacion6" rotation="0 0 0" position="0 -3 0" scale="2 2 2"
         animation-mixer> </a-gltf-model>
     </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 7">
+      <a-gltf-model rotation="90 0 0" position="0 0 0" scale="1.5 1.5 1.5" src="#Animacion7" animation-mixer>
+      </a-gltf-model>
+    </a-entity>
+
+    <a-entity mindar-image-target="targetIndex: 8">
+      <a-gltf-model rotation="0 90 0" position="0 -.3 0" scale=".3 .3 .3" src="#Animacion8" animation-mixer>
+      </a-gltf-model>
+    </a-entity>
+
+    
     </a-entity>
 
     <!-- contenedor para el modelo liberado -->
@@ -149,5 +163,6 @@
 
 
 </html>
+
 
 
